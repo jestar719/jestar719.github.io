@@ -1,0 +1,796 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="前两天看了官方的教学视频,讲的是使用NotificationCompact来使用通知.后来网上搜索了关与通知的文章,发现示例还是使用的Notification.从4.4到AndroidN都有关与通知的更新.所以通知最好还是用官方提供的兼容工具来创建和使用.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android通知及RemoteViews整理">
+<meta property="og:url" content="http://yoursite.com/2017/02/27/Android通知及RemoteView整理/index.html">
+<meta property="og:site_name" content="花京院的Blog">
+<meta property="og:description" content="前两天看了官方的教学视频,讲的是使用NotificationCompact来使用通知.后来网上搜索了关与通知的文章,发现示例还是使用的Notification.从4.4到AndroidN都有关与通知的更新.所以通知最好还是用官方提供的兼容工具来创建和使用.">
+<meta property="og:updated_time" content="2017-03-19T03:25:26.532Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android通知及RemoteViews整理">
+<meta name="twitter:description" content="前两天看了官方的教学视频,讲的是使用NotificationCompact来使用通知.后来网上搜索了关与通知的文章,发现示例还是使用的Notification.从4.4到AndroidN都有关与通知的更新.所以通知最好还是用官方提供的兼容工具来创建和使用.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/27/Android通知及RemoteView整理/"/>
+
+
+
+
+
+  <title>Android通知及RemoteViews整理 | 花京院的Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">花京院的Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不写体现不出技术,写了体现出了没技术.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/27/Android通知及RemoteView整理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="花京院典明">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="花京院的Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android通知及RemoteViews整理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-27T16:53:59+08:00">
+                2017-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前两天看了官方的教学视频,讲的是使用<code>NotificationCompact</code>来使用通知.后来网上搜索了关与通知的文章,发现示例还是使用的<code>Notification</code>.从4.4到AndroidN都有关与通知的更新.所以通知最好还是用官方提供的兼容工具来创建和使用.<br><a id="more"></a></p>
+<h2 id="通知"><a href="#通知" class="headerlink" title="通知"></a>通知</h2><h3 id="通知创建和使用的流程"><a href="#通知创建和使用的流程" class="headerlink" title="通知创建和使用的流程"></a>通知创建和使用的流程</h3><ul>
+<li>创建Notification.Builder的实例</li>
+<li>通过Builder来设置通知的相关属性,并通过builder()方法来获取设置好的通知</li>
+<li>获取NotificationManager来发送通知.</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Notification.Builder builder = <span class="keyword">new</span> Notification.Builder(getApplicationContext());</div><div class="line">builder.setContentTitle(<span class="string">"这是标题"</span>);</div><div class="line">Notification build = builder.build();</div><div class="line">NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);</div><div class="line">nm.notify(<span class="number">0</span>,build);</div></pre></td></tr></table></figure>
+<p>官方的兼容包中提供了兼容工具类,用来在不同版本下创建和使用兼容的通知<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">NotificationCompat.Builder builder = <span class="keyword">new</span> NotificationCompat.Builder(getApplicationContext());</div><div class="line">builder.setContentTitle(<span class="string">"这是标题"</span>);</div><div class="line">Notification nofitication = builder.build();</div><div class="line">NotificationManagerCompat.from(getApplicationContext()).notify(<span class="number">0</span>,Notification);</div></pre></td></tr></table></figure></p>
+<p>使用<code>NotificationCompact</code>和<code>NotificationManagerCompat</code>两个类来提供兼容性.实际上底层的实现还是一样的.<br><code>NotificationManagerCompat</code>通过静态方法from(Context Context)创建了一个自身的实例.实例中通过参数Context获取了一个<code>NotificationManager</code>,实际上通知还是通过它来发送.<br>实际上这两个工具类内部会根据应用运行机器的版本来创建对应的实现类来提供兼容性.</p>
+<h3 id="通知的设置"><a href="#通知的设置" class="headerlink" title="通知的设置"></a>通知的设置</h3><p>通知是通过Builder来设置的.常见的设置如下</p>
+<ul>
+<li>设置标题 setContentTitle(CharSequence)</li>
+<li>设置文字内容 setContentText(CharSequence)</li>
+<li>设置副文字 setSubContextText(CharSequence)</li>
+<li>设置大图标 setLargeIcon(Bitmap) 不设置时默认为应用图标</li>
+<li>设置小图标 setSmallIcon(int)  参数为图片资源Id</li>
+<li>设置颜色 setColor(int color) 参数为RGB值</li>
+<li>设置声音 setSound</li>
+<li>设置震动 setVibrate</li>
+<li>设置闪灯 setLight(int,int,int) 第一个int为颜色的资源id,第二个和第三个是闪灯开启和关闭的时间,单位为毫秒</li>
+<li>设置点击后是否自动取消 setAutoCancel(boolean)</li>
+</ul>
+<h4 id="进度条"><a href="#进度条" class="headerlink" title="进度条"></a>进度条</h4><p>从4.1开始通知里自带进度条.通过<code>setProgress(in max,int progress,boolean indeterminate)</code>来设置进度</p>
+<ul>
+<li>max 进度最大值</li>
+<li>progress 当前进度</li>
+<li>indeterminate 是否是无限循环 true表示无限循环进度条,不需要进度及最大值.false反之</li>
+</ul>
+<p>当进度条加载完毕后可以能过<code>setProgress(0,0,false)</code>来隐藏进度条.</p>
+<h3 id="消息发送"><a href="#消息发送" class="headerlink" title="消息发送"></a>消息发送</h3><p>发送通知需要一个id和一个Notification.通过NotificationManager发送到远程的NotificationService上.用Notification里的数据更新远程的UI.<br>使用notify(int id,Notification notify)可以不断的更新同一个通知.另外此方法可以有个重载的方法可以设置一个Tag.</p>
+<h4 id="ID"><a href="#ID" class="headerlink" title="ID"></a>ID</h4><p>id需要自己设置,一个Id对应一个通知.NotificationService收到Notification后会根据Id去查找对应的View.如果不存在则创建一个.如果存在则更新UI<br>也就是说如果id相同时,后续的通知会把之前的通知替换掉,如果id不同时会弹出多个通知.</p>
+<h3 id="PendingIntent"><a href="#PendingIntent" class="headerlink" title="PendingIntent"></a>PendingIntent</h3><p>PendingIntent用与处理通知的交互事件(也就是点击事件).PendingIntent表示的是一个待定的意图.<br>可以用来开启一个Activity,Service或广播接收者,它是对Intent的包装.对外部提供这个Intent.通知被点击时系统会按照PendingIntent设置的方法及Intent设置的目标去开启对应的Activity,Service或广播接收者.<br>创建PendingIntent的方法如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">PendingIntent.startActivity(Context context,<span class="keyword">int</span> requestCode,Intent intent,<span class="keyword">int</span> flag);</div><div class="line">PendingIntent.startService(Context context,<span class="keyword">int</span> requestCode,Intent intent,<span class="keyword">int</span> flag);</div><div class="line">PendingIntent.startBroadcast(Context context,<span class="keyword">int</span> requestCode,Intent intent,<span class="keyword">int</span> flag);</div></pre></td></tr></table></figure></p>
+<p>所需要的参数都一样,startActivity还可以额外带一个bundle参数.</p>
+<ul>
+<li>Context 启动所需上下文.实际上传递到外部的是应用的Application.所以在点击通知时哪怕应用没启动,也可以开启对应的组件.</li>
+<li>requestCode 请求码,自定义</li>
+<li>intent 启动所需组件的intent,因为Context是Application.所以启动Activity需要NEW_TASK标识.</li>
+<li>flag PendingIntent的标识</li>
+</ul>
+<p>对与更新同一个id的通知而言,这两个没有作用,不管PendingIntent是否有变化,始终都是新的通知替换掉原来的.<br>当每次都使用不同的id来弹出多个通知时,这些flag才会发生作用.这里需要涉及PendingIntent的匹配问题.<br>两个PendingIntent匹配指的是requestCode相同并且PendingIntent内部的intent都匹配.<br>当两个intent内部的ComponentName和intent-filter相同,这两个intent就算是匹配的.ComponentName相同指的是这个intent希望开启的组件是相同的.<br>多个通知的PendingIntent如果不匹配是互不干扰的.如果是匹配的.则根据flag有不同的处理方式.</p>
+<ul>
+<li>FLAG_ONE_SHOT<br>  PendingIntent只执行一次,也就是说多个含有匹配的PendingIntent的通知,只要有一个被点击了,那么其它的就点击无效.通知里如果还含有其它的PendingIntent,还是可以被点击的.</li>
+<li>FLAG_NO_CREAT<br>  如果PendingIntent不存在时并不创建新的实例,而是返回null.这个很少用.</li>
+<li>FLAG_CANCEL_CURRENT<br>  如果PendingIntent已经存在,则取消前者,创建新的实例以保持数据为最新.多个含有匹配PendingIntent的通知,只有最新的可以被点击,其它的点击无效.</li>
+<li>FLAG_UPDATE_CURRENT<br>  多个含有PendingIntent的通知都会更新其Intent中的Extra数据与最新的通知中保持一至.</li>
+</ul>
+<h3 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h3><p>通知的点击交互被称为Action.<br>通知自身的点击交互设置方法是setContentIntent(PendingIntent).<br>在新版本中通知可以添加不同的按钮来对应不同的Action,添加Action的方法有两种<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">builer.addAction(Action)</div><div class="line">builer.addAction(<span class="keyword">int</span> iconId,CharSequence title,PendingIntent intent)</div></pre></td></tr></table></figure></p>
+<p>实际上都是添加Action实例.区别在与Action是否自己来构造.Action在通知上显示为一个带图标的文字按钮.必须的三个参数如下</p>
+<ul>
+<li>IconId 图标的资源id</li>
+<li>Title 按钮的文字</li>
+<li>PendingIntent 按钮的点击处理</li>
+</ul>
+<h3 id="Style通知样式"><a href="#Style通知样式" class="headerlink" title="Style通知样式"></a>Style通知样式</h3><p>在4.0版本后通知可以被拉伸,通知可以设置不同的扩展样式.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">builer.setStyle(NotificationCompat.style);</div></pre></td></tr></table></figure></p>
+<p>系统提供了四种默认样式</p>
+<ul>
+<li><p>MediaStyle  媒体播放器样式.可以最多提供5个Action,用与后台播放媒体文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">builer.setStyle(<span class="keyword">new</span> NotificationCompat.MediaStyle()</div><div class="line">                .setMediaSession(MediaSession.Token));</div></pre></td></tr></table></figure>
+</li>
+<li><p>BigPictureStyle 大图样式.可以附加一张图片,扩展显示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">buider.setStyle(<span class="keyword">new</span> NotificationCompat.BigPictureStyle()</div><div class="line">                .bigPicture(Bitmap));</div></pre></td></tr></table></figure>
+</li>
+<li><p>InboxStyle 文字式表样式,可以以列表的形式显示最多5行的文字</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">builer.setStyle(<span class="keyword">new</span> NotificationCompat.InboxStyle()</div><div class="line">                .setLine(CharSequence)</div><div class="line">                .setLine(CharSequence));</div></pre></td></tr></table></figure>
+</li>
+<li><p>BigTextStyle 多文字内容.下拉显示全部文字</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">buider.setStyle(<span class="keyword">new</span> NotificationCompat.BigTextStyle()</div><div class="line">                .bitText(CharSequence));</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="RemoteViews"><a href="#RemoteViews" class="headerlink" title="RemoteViews"></a>RemoteViews</h2><p>RemoteViews是Android提供的一种远程服务,可以跨进程显示及更新UI,通知及桌面小部件就是基与它封装的.<br>其核心是跨进程传递数据.把UI的布局及对其View的操作封装到RemoteViews里,传递给其它进程.其它进程收到RemoteViews后调用RemoteViews的方法创建或更新UI并显示</p>
+<h3 id="RemoteViews的原理"><a href="#RemoteViews的原理" class="headerlink" title="RemoteViews的原理"></a>RemoteViews的原理</h3><p>RemoteViews本身并不是个View.它是个Pacelable,是个可以跨进程传递的一个数据.它携带了UI的布局及对应的数据<br>其它进程收到这个RemoteViews后会在其进程中根据这个布局inflat出对应的View.然后根据RemoteViews里的属性反射设置到对应的View上,然后根据设置点击监听.监听的处理就是调用对应的PendingIntent.<br>因为是跨进程,所以无法直接操作View,所以系统把对view的一个操作定义为Action对象.Action对象本身也是个Pacelable,所以可以跨进程.其封装了操作View的数据.远程进程遍历所有的Action并执行其apply方法通过反射更新View<br>向先前说的设置view的属性,设置点击监听,都是一个Action.</p>
+<h3 id="RemoteViews的创建"><a href="#RemoteViews的创建" class="headerlink" title="RemoteViews的创建"></a>RemoteViews的创建</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">RemoteViews remoteview=<span class="keyword">new</span> RemoteViews(String packageName,<span class="keyword">int</span> layoutId);</div><div class="line">如果通知需要使用自定义UI可以通过创建RemoteView实现</div><div class="line">builer.setCustomContentView(RemoteViews);</div><div class="line">或</div><div class="line">builer.setCustomBigContentView(RemoteViews);</div></pre></td></tr></table></figure>
+<p>packageName表示的是客户端的包名,layoutId表示布局Id.</p>
+<h3 id="RemoteViews的设置"><a href="#RemoteViews的设置" class="headerlink" title="RemoteViews的设置"></a>RemoteViews的设置</h3><p>RemoteViews对View的操作是在远程进行的.所以客户端只是封装了操作.通过RemoteViews提供的一系列set方法,RemoteViews把所有设置都封装成Action保存到集合中.</p>
+<ul>
+<li><p>设置属性参数为view的id及属性值如</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">setText(<span class="keyword">int</span> id,CharSequence text)</div><div class="line">setColor(<span class="keyword">int</span> Id,<span class="keyword">int</span> color)</div></pre></td></tr></table></figure>
+</li>
+<li><p>设置属性参数为view的id,方法名及属性值如</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">setBitmap(<span class="keyword">int</span> id,String methodName,Bitmap bitmap)</div><div class="line">setBoolean(<span class="keyword">int</span> id,String methodName,<span class="keyword">boolean</span> value)</div></pre></td></tr></table></figure>
+</li>
+<li><p>单个View设置点击事件</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">setOnClickPendingIntent(<span class="keyword">int</span> id,PendingIntent intent);</div></pre></td></tr></table></figure>
+</li>
+<li><p>集合View设置点击事件 需要 <code>setPendingIntentTemplate</code>及<code>setOnClickFillIntent</code>两个方法结合使用.</p>
+</li>
+</ul>
+<p>因为Action操作View是通过反射的.所以不能使用自定义控件,只能用有限的系统控件</p>
+<h4 id="Layout"><a href="#Layout" class="headerlink" title="Layout"></a>Layout</h4><ul>
+<li>FramgLayout</li>
+<li>LinearLayout</li>
+<li>RelativeLayout</li>
+<li>GridLayout</li>
+</ul>
+<h4 id="View"><a href="#View" class="headerlink" title="View"></a>View</h4><ul>
+<li>Button</li>
+<li>ImageView</li>
+<li>TextView</li>
+<li>ProgressBar</li>
+<li>ImageButton</li>
+<li>ListView</li>
+<li>GridView</li>
+<li>Chronometer</li>
+<li>AnalogClock</li>
+<li>ViewFlipper</li>
+<li>StackView</li>
+<li>AdapterViewFlipper</li>
+<li>ViewStub</li>
+</ul>
+<h3 id="发送RemoteViews到其它进程"><a href="#发送RemoteViews到其它进程" class="headerlink" title="发送RemoteViews到其它进程"></a>发送RemoteViews到其它进程</h3><p>可以使用任何IPC方式把本地设置好的RemoteViews发送到其它进程<br>是通过NotificationManager发送到系统进程,小部件是通过AppWidgetManager发送到系统进程.都是通过Binder机制.<br>因为RemoteViews是个Parcelable,所以可以通过很多系统提供的方式来传递,如Intent,Message,或其它IPC方式</p>
+<h3 id="远程的UI操作"><a href="#远程的UI操作" class="headerlink" title="远程的UI操作"></a>远程的UI操作</h3><p>远程收到RemoteViews后通过调用其 <code>apply()</code>或<code>reApply()</code> 方法创建或更新UI</p>
+<h4 id="Apply"><a href="#Apply" class="headerlink" title="Apply"></a>Apply</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> View <span class="title">apply</span><span class="params">(Context context,ViewGroup parent,OnClickHandler handler)</span></span>;</div></pre></td></tr></table></figure>
+<p>其中parent是父布局,这个方法会创建一个View并根据Action设置属性,返回这个设置好的View</p>
+<ul>
+<li>创建布局<br>  从RemoteViews里获取布局文件的id,根据id填充出对应的View.因为是根据ID来填充布局的,所以必须保证远程进程能根据id获取到布局文件.<br>  系统是根据RemoteViews里的包名来获取包内的布局文件的,同一个应用内不同的线程也可以根据id来获取布局文件.但如果是两个不同的应用是不能根据id来获取布局文件的</li>
+<li>设置属性<br>  RemoteViews会调用<code>perfomApply(View view,ViewGroup parent,OnClickHandler handler)</code>来设置填充好的View<br>  其实就是遍历Action.调用其 <code>apply()</code> 方法操作View.反射设置属性,或通过OnClickHandler设置点击交互</li>
+<li>把填充并设置好的View添加到父布局中</li>
+</ul>
+<h4 id="ReApply"><a href="#ReApply" class="headerlink" title="ReApply"></a>ReApply</h4><pre><code class="java"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reapply</span><span class="params">(Context context, View v, OnClickHandler handler)</span></span>;
+</code></pre>
+<p><strong>reApply()</strong> 方法只是更新UI,也是调用 <strong>perfomApply()</strong> 方法.<br>如果是两个不同的应用间使用RemoteViews,是不能使用 <strong>apply()</strong> 方法来创建UI的.<br>这时需要两边约定好布局文件,远程端在需要创建UI时在使用本地的布局文件填充View.然后调用 <strong>reApply()</strong> 方法来更新UI,最后再添加到父布局        </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通知是由RemoteViews来实现的,通过Notification类来封装一个RemoteViews.<br>设置不同的style实际上是设置RemoteViews里的layoutId.<br>通过NotificationManager的 <strong>notify()</strong> 方法发送到系统的NotificationService中.<br>系统的NotificationService里维护着各种Notification,实际上一个id对应着一个RemoteViews.<br>系统在自己的进程里创建和更新通知.当通知被点击时,在系统进程中会根据PendingIntent来启动指定的Activity,Service,及BroadcasterReceiver.</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/27/androidstudio快捷键整理/" rel="next" title="AndroidStudio快捷键整理">
+                <i class="fa fa-chevron-left"></i> AndroidStudio快捷键整理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/28/Android数据加密相关/" rel="prev" title="Android数据加密相关">
+                Android数据加密相关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="花京院典明" />
+          <p class="site-author-name" itemprop="name">花京院典明</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#通知"><span class="nav-number">1.</span> <span class="nav-text">通知</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通知创建和使用的流程"><span class="nav-number">1.1.</span> <span class="nav-text">通知创建和使用的流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通知的设置"><span class="nav-number">1.2.</span> <span class="nav-text">通知的设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进度条"><span class="nav-number">1.2.1.</span> <span class="nav-text">进度条</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息发送"><span class="nav-number">1.3.</span> <span class="nav-text">消息发送</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ID"><span class="nav-number">1.3.1.</span> <span class="nav-text">ID</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PendingIntent"><span class="nav-number">1.4.</span> <span class="nav-text">PendingIntent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Action"><span class="nav-number">1.5.</span> <span class="nav-text">Action</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Style通知样式"><span class="nav-number">1.6.</span> <span class="nav-text">Style通知样式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RemoteViews"><span class="nav-number">2.</span> <span class="nav-text">RemoteViews</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RemoteViews的原理"><span class="nav-number">2.1.</span> <span class="nav-text">RemoteViews的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RemoteViews的创建"><span class="nav-number">2.2.</span> <span class="nav-text">RemoteViews的创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RemoteViews的设置"><span class="nav-number">2.3.</span> <span class="nav-text">RemoteViews的设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Layout"><span class="nav-number">2.3.1.</span> <span class="nav-text">Layout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#View"><span class="nav-number">2.3.2.</span> <span class="nav-text">View</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发送RemoteViews到其它进程"><span class="nav-number">2.4.</span> <span class="nav-text">发送RemoteViews到其它进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#远程的UI操作"><span class="nav-number">2.5.</span> <span class="nav-text">远程的UI操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Apply"><span class="nav-number">2.5.1.</span> <span class="nav-text">Apply</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReApply"><span class="nav-number">2.5.2.</span> <span class="nav-text">ReApply</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">花京院典明</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

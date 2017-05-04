@@ -1,0 +1,802 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="最近在看HTTPS,其核心还是基与Rsa的SSL/TSL加密,所以整理一下在Android开发中常见的几种加密方式
+
+MD5
+BASE64
+AES
+DES
+RSA
+SSL/TSL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android数据加密相关">
+<meta property="og:url" content="http://yoursite.com/2017/02/28/Android数据加密相关/index.html">
+<meta property="og:site_name" content="花京院的Blog">
+<meta property="og:description" content="最近在看HTTPS,其核心还是基与Rsa的SSL/TSL加密,所以整理一下在Android开发中常见的几种加密方式
+
+MD5
+BASE64
+AES
+DES
+RSA
+SSL/TSL">
+<meta property="og:updated_time" content="2017-03-19T03:25:26.532Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android数据加密相关">
+<meta name="twitter:description" content="最近在看HTTPS,其核心还是基与Rsa的SSL/TSL加密,所以整理一下在Android开发中常见的几种加密方式
+
+MD5
+BASE64
+AES
+DES
+RSA
+SSL/TSL">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/28/Android数据加密相关/"/>
+
+
+
+
+
+  <title>Android数据加密相关 | 花京院的Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">花京院的Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不写体现不出技术,写了体现出了没技术.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/28/Android数据加密相关/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="花京院典明">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="花京院的Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android数据加密相关</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-28T18:18:39+08:00">
+                2017-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在看HTTPS,其核心还是基与Rsa的SSL/TSL加密,所以整理一下在Android开发中常见的几种加密方式</p>
+<ul>
+<li>MD5</li>
+<li>BASE64</li>
+<li>AES</li>
+<li>DES</li>
+<li>RSA</li>
+<li>SSL/TSL<a id="more"></a>
+</li>
+</ul>
+<h2 id="MD5加密"><a href="#MD5加密" class="headerlink" title="MD5加密"></a>MD5加密</h2><p>MD5英文全称<code>Message-Digest Algorithm 5</code>,全称消息算法摘要,是一种不可逆加密方式</p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>压缩性：任意长度的数据，算出的MD5值长度都是固定的。</li>
+<li>容易计算：从原数据计算出MD5值很容易。</li>
+<li>抗修改性：对原数据进行任何改动，哪怕只修改1个字节，所得到的MD5值都有很大区别。</li>
+<li>强抗碰撞：已知原数据和其MD5值，想找到一个具有相同MD5值的数据（即伪造数据）是非常困难的。</li>
+</ul>
+<p>因为其特点,MD5加密通常用来验证文件的完整性,防串改.</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>在Java中提供了MessageDigest类来加密数据.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span>[] resource; <span class="comment">//需要加密的数据</span></div><div class="line">MessageDigest md5=MessageDigest.getInstance(<span class="string">"MD5"</span>);</div><div class="line"><span class="keyword">byte</span>[] bytes=md5.digest(resource);</div><div class="line">StringBuilder builder=<span class="keyword">new</span> StringBuilder(bytes.lenght);</div><div class="line"><span class="keyword">for</span> (<span class="keyword">byte</span> <span class="keyword">byte</span> :bytes ) &#123;</div><div class="line"> String temp = Integer.toHexString(b &amp; <span class="number">0xff</span>);</div><div class="line"> <span class="keyword">if</span> (temp.lenght==<span class="number">1</span>) &#123;</div><div class="line">     builder.append(<span class="number">0</span>);</div><div class="line"> &#125;</div><div class="line">    builder.append(temp);</div><div class="line">&#125;</div><div class="line">String MD5=builder.toString();</div></pre></td></tr></table></figure></p>
+<p>MD5加密是对字节数组进行操作的.所以无论加密文件或是其它都需要先转换为字节数组.加密后的结果也是字节数组.<br>为了方便查看,需要按规定转换为字节数组.</p>
+<h2 id="BASE64"><a href="#BASE64" class="headerlink" title="BASE64"></a>BASE64</h2><p>BASE64并不是一种加密方式,而是对字节数组的一种编码方式.实际上是让字节数据转换为文本的方案.</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>BASE64是把字节数据转换为ASC码中对应的64个字符(英文大小写,+及/).<br>转换方式为每6位字节对应一个字符.不足位的后面补0.6位字节转换为十进制数值.范围是0-63,对应64个字符.如果有不足位的,在编码后会补上数量对应的=</p>
+<h3 id="用处"><a href="#用处" class="headerlink" title="用处"></a>用处</h3><ul>
+<li>统一编码方式,不需要考虑字符集对数据的影响</li>
+<li>可以把任何文件或数据都以纺一的文本方式保存</li>
+</ul>
+<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><p>在Java中提供了Base64类来实现编码转换<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//编码</span></div><div class="line">String encode= Base64.encode(<span class="keyword">byte</span>[] bytes,<span class="keyword">int</span> flag);</div><div class="line"><span class="comment">//解码</span></div><div class="line"><span class="keyword">byte</span>[] decode=Base64.decode(<span class="keyword">byte</span>[] bytes,<span class="keyword">int</span> flag);</div></pre></td></tr></table></figure></p>
+<p>flag表示编码方式,通常使用<code>Base64.DEFAULT</code></p>
+<ul>
+<li><code>Base64.DEFAULT</code> 默认的编码方式</li>
+<li><code>Base64.NO_PADDING</code> 忽略后缀的=号</li>
+<li><code>Base64.NO_WRAP</code> 省略换行符</li>
+<li><code>Base64.CTRL</code> 使用微软的换行符,而不是Liunux的</li>
+<li><code>Base64.URL_SAFE</code> 使用<code>-和_</code>代替<code>+和/</code>以保证在URL的安全.通常用与网络传输</li>
+</ul>
+<h2 id="AES"><a href="#AES" class="headerlink" title="AES"></a>AES</h2><p><code>Advanced Encryption Standard</code>,全称为高级加密标准,又称为 <strong>Rijndael</strong> 加密法,使用的是区块加密方案.<br>区块加密方案是把一定数量的字节划分为一个区块,把区块内的数据加密成相同位数的数据<br>AES是一种对称加密方案,所以需要加密端和解密端都使用相同的密钥.</p>
+<h3 id="特点-1"><a href="#特点-1" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>区块 AES是对字节数组按区块划分,对区块进行加密.AES区块大小固定为128位.</li>
+<li>密钥 AES的密钥长度有三种,128位/192位/256位 位数越多安全性越高.</li>
+<li>矩阵 AES每次对区块中的16个字节进行操作,这4个字节会组成一个4x4的矩阵.</li>
+<li>回合密钥 AES对每个矩阵的操作时都会根据密钥生成一个16位的回合密钥.对应矩阵上的每一个字节</li>
+</ul>
+<h3 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h3><p>在Java中通过MessageDigest来进行AES加解密<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//密钥原数据字符串,两端必须一样,128位的密钥字符串长度必须为16</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String KEY=<span class="string">""</span></div><div class="line"><span class="comment">//加密方式,AES表示AES加密,CBC表示区块的处理方式,PKC5Padding表示区块的填充方式.</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String MODE=<span class="string">"AES/CBC/PKCS5Padding"</span></div><div class="line"></div><div class="line"><span class="comment">//生成密钥</span></div><div class="line">KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY);</div><div class="line">SecretKey secretKey = keyGenerator.generateKey();</div><div class="line"><span class="comment">//初始化密码处理类</span></div><div class="line">Cipher cipher = Cipher.getInstance(MODE);</div><div class="line">cipher.init(Cipher.ENCRIPT_MODE,secretKey);  <span class="comment">//第一个参数为模式,ENCRIPT_MODE为加密, DECRIPT为解密</span></div><div class="line"><span class="comment">//cipher.init(Cipher.DECRIPT_MODE,secretKey,"BC");  使用`PKCS7Padding`方式时需要加载bouncycastle包,BC为提供该填充方式的Provicer</span></div><div class="line"><span class="keyword">byte</span>[] date=cipher.doFinal(<span class="keyword">byte</span>[] data); <span class="comment">//加密和解密都是同一个方法,由初始化的模式决定.对源字节数组进行处理.生成新的字节数组.</span></div></pre></td></tr></table></figure></p>
+<p>填充方式有几种.Java6没有实现所有的填充方式.</p>
+<ul>
+<li><code>NoPadding,PKCS5Padding,ISO10126Padding</code> Java6实现</li>
+<li><code>PKCS7Padding,ZeroBytePadding</code> 需要加载<code>bouncycastle</code>包</li>
+</ul>
+<p>生成密钥时,<code>getInstance()</code>有个重载的方法可以添加一个provier.为密钥添加一个随机数.<br>AES加密安全性高,速度快.</p>
+<h2 id="DES"><a href="#DES" class="headerlink" title="DES"></a>DES</h2><p><code>Data Encryption Standard</code>,标准加密算法.使用64位密钥的对称加密.使用的也是区块加密方案.<br>因为是64位密钥,安全性不高,现已经被AES加密替代.<br>实现方法同AES加密,只需要把MODE中的<code>AES</code>改为<code>DES</code></p>
+<h2 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h2><p>目前使用最广泛的非对称加密.生成一对密钥–公钥和私钥.公钥对来对外提供.私钥只有密钥生成者自己拥有<br>非对称算法需要指定密钥长度,越长安全性越好,但加解密的速度就越慢.通常指定1024或2048.<br>一次加密的的密文长度为密钥长度/8-11,所以1024长度的密钥一次只能加密117字节.2048能加密245字节.<br>所以非对称加密通常只用与短数据加密,如签名或对称加密的密钥.<br>RSA加密都是一用与一对多的场景.<br>RSA有两种使用方式</p>
+<ul>
+<li>加密算法<br>  公钥加密,只有私钥才能解密</li>
+<li>签名算法<br>  私钥签名,只有公钥才能验证.<br>  如Github使用的SSH登录就是使用的RSA加密算法.用户把公钥保存到服务器,<br>  通过SSH登录时服务器发一个随机数给客户端,客户端使用私钥加密发送到服务器,服务器用保存的公钥解密.</li>
+</ul>
+<h3 id="RSA的密钥的产生"><a href="#RSA的密钥的产生" class="headerlink" title="RSA的密钥的产生"></a>RSA的密钥的产生</h3><ul>
+<li>随机获取两个大质数,得其积N</li>
+<li>获取N的欧拉函数值-&gt;整数R</li>
+<li>随机获取一个小与R并与之互质的整数E,计算出E的反模元素D</li>
+<li>公钥是(N,E),私钥是(N,D)</li>
+</ul>
+<h3 id="RSA的原理"><a href="#RSA的原理" class="headerlink" title="RSA的原理"></a>RSA的原理</h3><ul>
+<li>欧拉定理<br>  两个互质的正整数,A和N,N的欧拉函数为P,则A的P次方除以N余1</li>
+<li>费马小定理(RSA算法核心)<br>  因为质数P的欧拉函数为P-1,所以一个整数A和一个质数N互质时,A的N-1次方除以N余1</li>
+<li>反模元素<br>  两个互质的正整数.A和N,则一定存在一个整数B,使得A乘B除以N余数为1        </li>
+</ul>
+<h3 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a>实现</h3><h4 id="定义常量"><a href="#定义常量" class="headerlink" title="定义常量"></a>定义常量</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> KEY_SIZE=<span class="number">1024</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> RSA=<span class="string">"RSA"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> MODE=<span class="string">"RSA/ECB/PCKS1Padding"</span></div></pre></td></tr></table></figure>
+<p>这里注意RSA的加密填充方式,需要两端保持一至.<br>在Adrioid中默认使用的是<code>RSA/None/NoPadding</code>,在Java中使用的是<code>RSA/None/PCKS1Padding</code>.</p>
+<h4 id="创建密钥"><a href="#创建密钥" class="headerlink" title="创建密钥"></a>创建密钥</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">KeyPairGenerator rsa = KeyPairGenerator.getInstance(RSA);</div><div class="line">rsa.initialize(KEY_SIZE);</div><div class="line">KeyPair keyPair = rsa.generateKeyPair();</div><div class="line">Key publicKey = keyPair.getPublic();</div><div class="line"><span class="keyword">byte</span>[] publicKeyEncoded = publicKey.getEncoded();</div><div class="line">Key privateKey = keyPair.getPrivate();</div><div class="line"><span class="keyword">byte</span>[] privateKeyEncoded = privateKey.getEncoded();</div></pre></td></tr></table></figure>
+<h4 id="把字节数组转换为Key"><a href="#把字节数组转换为Key" class="headerlink" title="把字节数组转换为Key"></a>把字节数组转换为Key</h4><p>公钥会以字节数组的形式公开.接收方需要把字节数据转化为公钥<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//公钥公开的方式为X509</span></div><div class="line">KeySpec KeySpec = <span class="keyword">new</span> X509EncodedKeySpec(publicKeyEncoded);</div><div class="line">PublicKey publicKey = keyFactory.generatePublic(keySpec);</div><div class="line"><span class="comment">//私钥公开的方式为PKCS8</span></div><div class="line">KeySpec keySpec = <span class="keyword">new</span> PKCS8EncodedKeySpec(publicKeyEncoded);</div><div class="line">PrivateKey privateKey = keyFactory.generatePrivate(keySpec);</div></pre></td></tr></table></figure></p>
+<h4 id="加解密"><a href="#加解密" class="headerlink" title="加解密"></a>加解密</h4><p>通常使用公钥加密,使用私钥解密.还是使用<code>Cipher</code>类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Cipher cipher=Cipher.instance(MODE);</div><div class="line"><span class="comment">//使用公钥加密</span></div><div class="line">cipher.init(Cipher.ENCRIPT_MODE,publicKey);</div><div class="line">cipher.doFinal();</div><div class="line"><span class="comment">//使用私钥解密</span></div><div class="line">cipher.init(Cipher.DECRIPT_MODE,privateKey);</div><div class="line">cipher.doFinal();</div></pre></td></tr></table></figure></p>
+<h2 id="SSL"><a href="#SSL" class="headerlink" title="SSL"></a>SSL</h2><p>安全套接字（Secure Socket Layer，SSL）协议是Web浏览器与Web服务器之间安全交换信息的协议，提供两个基本的安全服务：鉴别与保密。</p>
+<ul>
+<li>鉴别 可选的客户端认证及强制的服务端认证</li>
+<li>保密 双方在连接时定义好加密方式,所有传递内容都会加密.</li>
+</ul>
+<p>SSL是间与应用层与TCP层.应用数据经过SSL层加密并加上SSL头传输给TCP层.</p>
+<h3 id="SSL通信流程"><a href="#SSL通信流程" class="headerlink" title="SSL通信流程"></a>SSL通信流程</h3><ul>
+<li>握手<br>  握手是在两端连接后数据传输前的协议行为,通过三次握手确定双方的身份,双方的加密方式,以及确定密钥.这个握手过程是通过RAS加密及身份证书完成的.</li>
+<li>加密通信<br>  完成握手协议手,双方就按确定的加密方式以对称加密的方式对数据进行加密</li>
+</ul>
+<h3 id="握手协议"><a href="#握手协议" class="headerlink" title="握手协议"></a>握手协议</h3><ul>
+<li>客户端发送至服务器 一个会话ID,自身SSL版本.一个32位随机数.一自身支持的密码套件列表.一个hello.</li>
+<li>服务器接收后会根据客户端提供的列表选择一个密码套件,确定与客户端之间的加密方式</li>
+<li>服务器发送至客户端 会话ID,SSL版本,一个32位随机数,一个密码套件.一个servieHello.及自己的证书.</li>
+<li>客户端收到证书后可以对证书进行验证.然后生成一个32位随机数.这样总共就有三个随机数了.根据服务端确定的加密方式用这三个随机数生成密钥.然后从证书中获得服务端的公钥对第三个随机数加密</li>
+<li>客户端发送至服务器 加密的第三个随机数.</li>
+<li>服务器收到加密的随机数后使用私钥解密,然后使用三个随机数生成密钥.</li>
+<li>服务器发送至客户端 准备完成,可以开始加密通信</li>
+</ul>
+<h3 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h3><p>证书是一台服务器对外提供的一个身份证明.需要通过可靠的第三方认证机构(CA)来发布.<br>一个数字证书通常有以下几项</p>
+<ul>
+<li>证书持有者的公钥</li>
+<li>证书的发布机构</li>
+<li>CA的签名</li>
+<li>签名摘要的算法</li>
+</ul>
+<h3 id="证书的验证"><a href="#证书的验证" class="headerlink" title="证书的验证"></a>证书的验证</h3><p>一般的浏览器都会有CA根证书,含有所有CA的公钥</p>
+<ul>
+<li>CA验证 CA根证书中找到不证书的发布机构</li>
+<li>CA签名摘要验证 使用CA的公钥来解密签名摘要,如果解不开说明证书不对</li>
+<li>CA签名验证 使用公钥解密签名.然后使用签名摘要算法进行签名摘要,比对解密手的签名摘要.如果不同说明签名被更改</li>
+<li>证书过期验证 实现了在线证书状态协议(OCSP)的客户端可以在线查询证书是否过期</li>
+</ul>
+<h2 id="TSL"><a href="#TSL" class="headerlink" title="TSL"></a>TSL</h2><p>TLS 1.0是IETF（Internet Engineering Task Force，Internet工程任务组）制定的一种新的协议，它建立在SSL 3.0协议规范之上，是SSL 3.0的后续版本，可以理解为SSL 3.1</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/27/Android通知及RemoteView整理/" rel="next" title="Android通知及RemoteViews整理">
+                <i class="fa fa-chevron-left"></i> Android通知及RemoteViews整理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/07/APT相关/" rel="prev" title="APT相关">
+                APT相关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="花京院典明" />
+          <p class="site-author-name" itemprop="name">花京院典明</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MD5加密"><span class="nav-number">1.</span> <span class="nav-text">MD5加密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特点"><span class="nav-number">1.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">1.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BASE64"><span class="nav-number">2.</span> <span class="nav-text">BASE64</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">2.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用处"><span class="nav-number">2.2.</span> <span class="nav-text">用处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-1"><span class="nav-number">2.3.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AES"><span class="nav-number">3.</span> <span class="nav-text">AES</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特点-1"><span class="nav-number">3.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-2"><span class="nav-number">3.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DES"><span class="nav-number">4.</span> <span class="nav-text">DES</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA"><span class="nav-number">5.</span> <span class="nav-text">RSA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA的密钥的产生"><span class="nav-number">5.1.</span> <span class="nav-text">RSA的密钥的产生</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA的原理"><span class="nav-number">5.2.</span> <span class="nav-text">RSA的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-3"><span class="nav-number">5.3.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义常量"><span class="nav-number">5.3.1.</span> <span class="nav-text">定义常量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建密钥"><span class="nav-number">5.3.2.</span> <span class="nav-text">创建密钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#把字节数组转换为Key"><span class="nav-number">5.3.3.</span> <span class="nav-text">把字节数组转换为Key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加解密"><span class="nav-number">5.3.4.</span> <span class="nav-text">加解密</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSL"><span class="nav-number">6.</span> <span class="nav-text">SSL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SSL通信流程"><span class="nav-number">6.1.</span> <span class="nav-text">SSL通信流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#握手协议"><span class="nav-number">6.2.</span> <span class="nav-text">握手协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#证书"><span class="nav-number">6.3.</span> <span class="nav-text">证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#证书的验证"><span class="nav-number">6.4.</span> <span class="nav-text">证书的验证</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TSL"><span class="nav-number">7.</span> <span class="nav-text">TSL</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">花京院典明</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

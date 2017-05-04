@@ -1,0 +1,798 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="工具," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="前段时间买了个vps.主要是为了科学上网及linux练手.使用了shadowsocks来科学上网.后来听说kcptun可以对shadowsocks加速,所以又折腾了一下.
+Shadowsocks现在是科学上网的主选.在windows,Linux及Mac平台下都有对应的图形化程序可以直接使用.所以配置容易.
+KCP 是一个快速可靠协议，能以比 TCP 浪费10%-20%的带宽的代价，换取平均延迟降低">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ShadowSocks及kcptun加速">
+<meta property="og:url" content="http://yoursite.com/2017/02/25/ShadowSocks及kcptun加速/index.html">
+<meta property="og:site_name" content="花京院的Blog">
+<meta property="og:description" content="前段时间买了个vps.主要是为了科学上网及linux练手.使用了shadowsocks来科学上网.后来听说kcptun可以对shadowsocks加速,所以又折腾了一下.
+Shadowsocks现在是科学上网的主选.在windows,Linux及Mac平台下都有对应的图形化程序可以直接使用.所以配置容易.
+KCP 是一个快速可靠协议，能以比 TCP 浪费10%-20%的带宽的代价，换取平均延迟降低">
+<meta property="og:updated_time" content="2017-03-19T03:25:26.533Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ShadowSocks及kcptun加速">
+<meta name="twitter:description" content="前段时间买了个vps.主要是为了科学上网及linux练手.使用了shadowsocks来科学上网.后来听说kcptun可以对shadowsocks加速,所以又折腾了一下.
+Shadowsocks现在是科学上网的主选.在windows,Linux及Mac平台下都有对应的图形化程序可以直接使用.所以配置容易.
+KCP 是一个快速可靠协议，能以比 TCP 浪费10%-20%的带宽的代价，换取平均延迟降低">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/25/ShadowSocks及kcptun加速/"/>
+
+
+
+
+
+  <title>ShadowSocks及kcptun加速 | 花京院的Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">花京院的Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不写体现不出技术,写了体现出了没技术.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/25/ShadowSocks及kcptun加速/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="花京院典明">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="花京院的Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ShadowSocks及kcptun加速</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-25T16:47:17+08:00">
+                2017-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前段时间买了个vps.主要是为了科学上网及linux练手.使用了<code>shadowsocks</code>来科学上网.后来听说<code>kcptun</code>可以对<code>shadowsocks</code>加速,所以又折腾了一下.</p>
+<p><code>Shadowsocks</code>现在是科学上网的主选.在windows,Linux及Mac平台下都有对应的图形化程序可以直接使用.所以配置容易.</p>
+<p>KCP 是一个快速可靠协议，能以比 TCP 浪费10%-20%的带宽的代价，换取平均延迟降低 30%-40%，且最大延迟降低三倍的传输效果</p>
+<p><code>kcptun</code>是一个非常简单和快速的，基于 KCP 协议的 UDP 隧道，它可以将 TCP 流转换为 KCP+UDP 流,分为服务端和客户端,都需要使用命令行模式来配置.所以有点麻烦.</p>
+<a id="more"></a>
+<h3 id="shadowsocks"><a href="#shadowsocks" class="headerlink" title="shadowsocks"></a>shadowsocks</h3><p><code>shadowsocks</code>的原理是通过把<code>http</code>连接转换成<code>socks5</code>连接来进行科学上网的.</p>
+<p>一般的网络连接有四种协议</p>
+<ol>
+<li><code>http</code> 通常浏览器都使用</li>
+<li><code>mail</code> 收发邮件使用</li>
+<li><code>ftp</code> 上传下载</li>
+<li><code>socks</code> 目前有v4和v5两个版本</li>
+</ol>
+<p><code>shadowsocks</code>的作用就是把本来通过<code>http</code>协议的请求通过<code>socks</code>协议进行发送,然后把收到的响应转发到指定的端口(默认是<strong>1080</strong>).</p>
+<h4 id="全局和自动代理"><a href="#全局和自动代理" class="headerlink" title="全局和自动代理"></a>全局和自动代理</h4><p>全局模式就是拦截所有的<code>http</code>,全通过<code>socks</code>连接.但这样不够效率,而且浪费服务器端的流量,所以大多都选择自动代理模式.也就是只有需要科学上网的时候才使用<code>shadowsocks</code>来代理连接.</p>
+<p>除了mac可以自动配置系统代理外,在<code>Linux</code>和<code>window</code>平台都需要在配置完<code>shadowsocks</code>之外还要配置浏览器.</p>
+<p>通常浏览器使用代理插件时需要pac文件来判断是否需要代理.如果需要就使用配置的代理,也就是我们配置的<code>shadowsocks</code>,否则就是直接连接.</p>
+<p>也就是说自动代理是浏览器端是可以选择把请求直接发送或交给<code>shadowsocks</code>来处理.而全局模式就是浏览器发送的任何请求都会被<code>shadowsocks</code>给拦截并处理.</p>
+<h4 id="shadowsocks的配置"><a href="#shadowsocks的配置" class="headerlink" title="shadowsocks的配置"></a>shadowsocks的配置</h4><p><code>shadowsocks</code>的配置是可以保存在一个<code>json</code>文件中的.目前的图形化程序都是加载<code>json</code>文件来配置的.如</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line"><span class="attr">"server"</span>:<span class="string">"10.10.10.10"</span>,</div><div class="line"><span class="attr">"server_port"</span>:<span class="number">10080</span>,</div><div class="line"><span class="attr">"local_address"</span>:<span class="string">"127.0.0.1"</span>,</div><div class="line"><span class="attr">"local_port"</span>:<span class="string">"1080"</span>,</div><div class="line"><span class="attr">"password"</span>:<span class="string">"xxxxx"</span>,</div><div class="line"><span class="attr">"timout"</span>:<span class="number">300</span>,</div><div class="line"><span class="attr">"method"</span>:<span class="string">"ase-256-cfb"</span></div><div class="line"><span class="string">"fast_open"</span>:<span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>很简单的几项.</p>
+<ul>
+<li><code>local</code></li>
+</ul>
+<p>接收和发送http连接的ip地址和端口.通常ip是<code>127.0.0.1</code>也就是本机,端口通常为<strong>1080</strong>,有的图形化程序不能设置端口</p>
+<p>浏览器或系统代理会把需要科学上网的请求发送到这个端口上,并监听这个端口获取响应.</p>
+<ul>
+<li><code>server</code></li>
+</ul>
+<p>需要把<code>socks</code>请求发送的服务器地址及端口</p>
+<ul>
+<li><code>password</code>及<code>method</code></li>
+</ul>
+<p>加密方式及密码.这两个由服务器决定</p>
+<p>简单的来说就是<code>shadowsocks</code>提供了一个本地的入口<code>local</code>,通过这个入口接收所有需要科学上网的请求,然后把请求通过<code>method</code>加密,附带<code>password</code>发送到<code>server</code>的<code>server_port</code>端口,并接收响应.</p>
+<h3 id="kcptun"><a href="#kcptun" class="headerlink" title="kcptun"></a>kcptun</h3><p><a href="https://github.com/xtaci/kcptun" target="_blank" rel="external">官网地址</a></p>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p>详细原理请自行<code>google</code></p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><h5 id="服务器端"><a href="#服务器端" class="headerlink" title="服务器端"></a>服务器端</h5><p>一般服务器都是<code>Linux</code>系统的,需要使用<code>ssh</code>方式连接.<code>windows</code>下需要使用<code>Xshell</code>或<code>puttyssh</code>来连接,<code>mac</code>和<code>linux</code>可以直接使用<code>ssh</code>命令</p>
+<blockquote>
+<p><code>ssh -p [服务器的ssh端口] [帐号]@[服务器地址]</code></p>
+</blockquote>
+<p>连接到服务器后使用的是命令行.</p>
+<p>最简单的安装方式就是使用别人配置好的脚本自动化安装,需要分别输入以下指令,每个命令输入后按回车执行.执行完比后再输入下一条.</p>
+<p>此方式需要<code>root</code>权限.可以用su临时切换成<code>root</code>帐户</p>
+<blockquote>
+<ol>
+<li><code>wget https://raw.githubusercontent.com/kuoruan/kcptun_installer/master/kcptun.sh</code></li>
+<li><code>chmod +x ./kcptun.sh</code></li>
+<li><code>./kcptun.sh</code></li>
+</ol>
+</blockquote>
+<p>这三行命令的意思是从网上下载<code>kcptun.sh</code>脚本,给这个脚本设置可执行权限,然后执行这个脚本.<br>执行这个脚本后会自动安装<code>kcptun</code>服务端及相关软件.然后进行配置.</p>
+<p>打开这个脚本可以看到具体的安装方式</p>
+<ol>
+<li>服务端的下载地址<code>https://api.github.com/repos/xtaci/kcptun/releases</code>,脚本会根据下载地址查找最新的版本,及下载地址列表,然后根据系统的版本决定具体的下载链接</li>
+<li>把服务端下载到本地并解压,把其中的服务端保存在<code>/usr/share/kcptun</code>目录下.</li>
+<li>下载并安装<code>json</code>解析软件.脚本使用的是<code>https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64</code>或<code>jq-linux32</code>,根据服务器版本决定</li>
+<li>使用默认的配置来配置<code>kcptun</code></li>
+<li>使用<code>json</code>解析器读取默认配置.并写入安装目录，默认保存为config.json</li>
+<li>下载并安装<code>supervistor</code>来管理<code>kcptun</code></li>
+</ol>
+<p>个人觉得这个脚本用起来已经很方便了.不过可以不使用默认配置,而是改为自己的配置.免得安装完以后再配置一次</p>
+<ol>
+<li>修改默认配置为你自定义的配置</li>
+<li>使用<code>scp</code>命令把改好的脚本上传至服务器,或把脚本放在网上然后让服务器通过<code>wget</code>下载</li>
+<li>让脚本可执行,并执行脚本</li>
+</ol>
+<h5 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h5><ol>
+<li>从<code>https://github.com/xtaci/kcptun/releases/tag/v20161222</code>下载客户端.目前的机型都用带<code>amd-64</code>的.<code>386</code>是给虚拟机和老式机型使用的.<code>linux</code>平台下载带<code>linux</code>的.</li>
+<li>解压后<code>client</code>开头的就是客户端,如<code>client_linux_amd64</code></li>
+<li>官网上提供了简单的客户端命令行配置。但建议客户端也使用<code>json</code>文件来配置。<code>client_linux_amd64 -c kcptun.json</code>,<code>kcptun.json</code>是配置文件</li>
+<li>建议写个脚本。开机运行。如<code>startKcp.sh</code></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#!sh</div><div class="line">client_linux_amd64 -c /etc/share/kctpun/kcptun.json</div></pre></td></tr></table></figure>
+<h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><p>在服务端安装脚本中定义了一个<code>DEFAULT</code>的数组就是默认配置数据。对应的是下面初始化参数的各项属性。写成的<code>json</code>文件如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line"><span class="attr">"listen_port"</span> : <span class="number">29900</span></div><div class="line"><span class="string">"target_ip"</span> : <span class="string">"127.0.0.1"</span></div><div class="line"><span class="string">"target_port"</span>:<span class="number">12948</span></div><div class="line"><span class="string">"key"</span>:<span class="string">"it's a secrect"</span></div><div class="line"><span class="string">"crypt"</span>:<span class="string">"aes"</span></div><div class="line"><span class="string">"mode"</span>:<span class="string">"fast"</span></div><div class="line"><span class="string">"mtu"</span>:<span class="number">1350</span></div><div class="line"><span class="string">"sndwnd"</span>:<span class="number">1024</span></div><div class="line"><span class="string">"rcvwnd"</span>:<span class="number">1024</span></div><div class="line"><span class="string">"datashard"</span>:<span class="number">10</span></div><div class="line"><span class="string">"parityshard"</span>:<span class="number">3</span></div><div class="line"><span class="string">"dscp"</span>:<span class="number">0</span></div><div class="line"><span class="string">"nocomp"</span>:<span class="literal">false</span></div><div class="line"><span class="string">"nodelay"</span>:<span class="number">0</span></div><div class="line"><span class="string">"interval"</span>:<span class="number">20</span></div><div class="line"><span class="string">"resend"</span>:<span class="number">2</span></div><div class="line"><span class="string">"nc"</span>:<span class="number">1</span></div><div class="line"><span class="string">"acknodelay"</span>:<span class="literal">false</span></div><div class="line"><span class="string">"sockbuf"</span>:<span class="number">4194304</span></div><div class="line"><span class="string">"keepalive"</span>:<span class="number">10</span></div><div class="line"><span class="string">"run_user"</span>:<span class="string">"root"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>服务端与客户端使用配置格式是一样的。其中需要自己配置的就几项</p>
+<ol>
+<li>端口<code>linsten_port</code>,<code>target_ip</code>,<code>target_port</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>客户端</th>
+<th>服务器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>listener_port</td>
+<td>与shadowsocks交互的端口</td>
+<td>对外的端口</td>
+</tr>
+<tr>
+<td>target_ip</td>
+<td>服务器的IP</td>
+<td>本机</td>
+</tr>
+<tr>
+<td>target_port</td>
+<td>服务器的端口（listen_port）</td>
+<td>与shadowsocks交互的端口</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><code>key</code>和<code>crypt</code>，密码和加密方式。<code>key</code>是密码，<code>crypt</code>为加密方式，常用的有<code>ase</code>，<code>ase-128</code>。</li>
+<li><code>mode</code> 加速模式。从低到高分别是<code>default</code>,<code>noraml</code>,<code>fast</code>,<code>fast2</code>,<code>fast3</code>,越高越耗费带宽</li>
+<li><code>mtu</code>,<code>sndwnd</code>,<code>rcdwnd</code>,<code>UDP</code>包的设置.在100M带宽下建议使用以下设置,其它带宽客户端的<code>sndwnd</code>,<code>rcdwnd</code>按比例设置<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">服务端: -mtu 1400 -sndwnd 2048 -rcvwnd 2048</div><div class="line">客户端: -mtu 1400 -sndwnd 256 -rcvwnd 2048 -dscp 46</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h5 id="客户端的连接"><a href="#客户端的连接" class="headerlink" title="客户端的连接"></a>客户端的连接</h5><ol>
+<li>浏览器,如果不是Mac则需要使用插件配置代理.代理设置为<code>sock5</code>,地址为<code>127.0.0.1</code>,端口为<code>shadowsocks</code>的<code>local_port</code>,默认是<code>1080</code></li>
+<li><code>shadowsocks</code>,需要根据服务端设置密码及加密方式,地址为<code>127.0.0.1</code>,端口为<code>kcptun</code>的<code>listener_port</code></li>
+<li><code>kcptun</code>,地址为服务器地址,端口为服务器<code>kcptun</code>的<code>listener_port</code></li>
+</ol>
+<p><a href="http://www.jianshu.com/p/ad53a46e6d90" target="_blank" rel="external">原文地址</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/工具/" rel="tag"># 工具</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/25/责任链模式及OkHttp中的实现/" rel="next" title="责任链模式及OkHttp中的实现">
+                <i class="fa fa-chevron-left"></i> 责任链模式及OkHttp中的实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/27/androidstudio快捷键整理/" rel="prev" title="AndroidStudio快捷键整理">
+                AndroidStudio快捷键整理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="花京院典明" />
+          <p class="site-author-name" itemprop="name">花京院典明</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#shadowsocks"><span class="nav-number">1.</span> <span class="nav-text">shadowsocks</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局和自动代理"><span class="nav-number">1.1.</span> <span class="nav-text">全局和自动代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shadowsocks的配置"><span class="nav-number">1.2.</span> <span class="nav-text">shadowsocks的配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kcptun"><span class="nav-number">2.</span> <span class="nav-text">kcptun</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原理"><span class="nav-number">2.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装"><span class="nav-number">2.2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#服务器端"><span class="nav-number">2.2.1.</span> <span class="nav-text">服务器端</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#客户端"><span class="nav-number">2.2.2.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置"><span class="nav-number">2.2.3.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#客户端的连接"><span class="nav-number">2.2.4.</span> <span class="nav-text">客户端的连接</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">花京院典明</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,737 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="设计模式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="责任链模式责任链模式是对一个事件的处理方法,所有能对事件进行处理的对象按顺序形成一个链表.事件经过链表中每个处理对象轮流处理.如果有返回值.则返回也是顺着这条链表反向返回.这个链表是先进后出模式.
+
+在现实中的责任链模型之一就是网络连接.对与程序猿而言,七层或五层的网络连接模型是肯定知道的.
+
+当一个网络请求发出时,需要经过应用层-&amp;gt;传输层-&amp;gt;网络层-&amp;gt;连接层-&amp;gt;物理层
+收">
+<meta property="og:type" content="article">
+<meta property="og:title" content="责任链模式及OkHttp中的实现">
+<meta property="og:url" content="http://yoursite.com/2017/02/25/责任链模式及OkHttp中的实现/index.html">
+<meta property="og:site_name" content="花京院的Blog">
+<meta property="og:description" content="责任链模式责任链模式是对一个事件的处理方法,所有能对事件进行处理的对象按顺序形成一个链表.事件经过链表中每个处理对象轮流处理.如果有返回值.则返回也是顺着这条链表反向返回.这个链表是先进后出模式.
+
+在现实中的责任链模型之一就是网络连接.对与程序猿而言,七层或五层的网络连接模型是肯定知道的.
+
+当一个网络请求发出时,需要经过应用层-&amp;gt;传输层-&amp;gt;网络层-&amp;gt;连接层-&amp;gt;物理层
+收">
+<meta property="og:updated_time" content="2017-03-19T03:25:26.535Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="责任链模式及OkHttp中的实现">
+<meta name="twitter:description" content="责任链模式责任链模式是对一个事件的处理方法,所有能对事件进行处理的对象按顺序形成一个链表.事件经过链表中每个处理对象轮流处理.如果有返回值.则返回也是顺着这条链表反向返回.这个链表是先进后出模式.
+
+在现实中的责任链模型之一就是网络连接.对与程序猿而言,七层或五层的网络连接模型是肯定知道的.
+
+当一个网络请求发出时,需要经过应用层-&amp;gt;传输层-&amp;gt;网络层-&amp;gt;连接层-&amp;gt;物理层
+收">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/25/责任链模式及OkHttp中的实现/"/>
+
+
+
+
+
+  <title>责任链模式及OkHttp中的实现 | 花京院的Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">花京院的Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">不写体现不出技术,写了体现出了没技术.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/25/责任链模式及OkHttp中的实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="花京院典明">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="花京院的Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">责任链模式及OkHttp中的实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-25T16:37:13+08:00">
+                2017-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h4><p>责任链模式是对一个事件的处理方法,所有能对事件进行处理的对象按顺序形成一个链表.事件经过链表中每个处理对象轮流处理.如果有返回值.则返回也是顺着这条链表反向返回.这个链表是先进后出模式.</p>
+<ul>
+<li>在现实中的责任链模型之一就是网络连接.对与程序猿而言,七层或五层的网络连接模型是肯定知道的.</li>
+</ul>
+<p>当一个网络请求发出时,需要经过应用层-&gt;传输层-&gt;网络层-&gt;连接层-&gt;物理层</p>
+<p>收到响应后正好反过来,物理层-&gt;连接层-&gt;网络层-&gt;传输层-&gt;应用层</p>
+<p>在请求经过各层时,由每层轮流处理.每层都可以对请求或响应进行处理.并可以中断链接,以自身为终点返回响应<br><a id="more"></a></p>
+<ul>
+<li>另一个现实模型就是Web服务器的请求缓存</li>
+</ul>
+<p>一个请示从客户端发送到Web服务器需要经过客户端-&gt;中间服务器-&gt;反向代理-&gt;Web端缓存(如Redis)-&gt;Web数据库</p>
+<p>除了Web数据库是请求的点外,中间所有层都可以缓存数据.如果有缓存时会终止请求,以自身为终点返回数据.</p>
+<p>如果途经的层没有缓存,则会在收到下一级的返回的数据时对数据进行缓存.然后返回上一层.</p>
+<p>在设计模式中,负责链模式就是对这种顺序处理事件的行为的抽象,通过接口来定义处理事件的方法.顺序分发/处理事件.</p>
+<ul>
+<li>每个责任人实现相同的接口,处理一个事件对象</li>
+<li>让事件对象责任人之间顺序传递</li>
+<li>事件的处理结果的返回是逆序的</li>
+<li>责任链中的每个责任人都可以有权不继续传递事件,以自身为终点处理事件返回结果</li>
+</ul>
+<h4 id="OkHttp中的责任链模式"><a href="#OkHttp中的责任链模式" class="headerlink" title="OkHttp中的责任链模式"></a>OkHttp中的责任链模式</h4><p>在<code>Okhttp</code>中,<code>Intercepter</code>就是典型的责任链械的实现.它可以设置任意数量的<code>Intercepter</code>来对网络请求及其响应做任何中间处理.比如设置缓存,<code>Https</code>的证书验证,统一对请求加密/防串改,打印自定义Log,过滤请求等.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Intercepter</span></span>&#123;</div><div class="line">    <span class="function">Response <span class="title">chian</span><span class="params">(Chian chian)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个接口很简单,拿到<code>Chain</code>对象.最后返回个<code>Response</code>,那这个对象是什么鬼??</p>
+<p>它有两个重要的方法<br><code>public Request getQuest()</code>及<code>public Response process(Request quest)</code><br>拿到请求及设置请求拿到响应.<br>一般的实现是先拿到请求.然后对请求做一番蹂躏,然后<code>process</code>一下,拿到<code>Response</code>,折腾一下.然后<code>return</code>掉<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> Response chain(Chain chain)&#123;</div><div class="line">    Requset quest = chian.getRequset()</div><div class="line">    ooxx(request);</div><div class="line">    Response response = chain.process(quest);</div><div class="line">    xxoo(response);</div><div class="line">    <span class="keyword">return</span> response;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>或许它不知道,<code>Resquse</code>其实是被上家ooxx过的,<code>Respnse</code>也是被下家xxoo过的.</p>
+<p>具体的实现可以去看一下源码,我这里就写一下自己理解的超简单的实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Okhttp</span> </span>&#123;</div><div class="line"><span class="keyword">private</span> List&lt;Intercepter&gt; mIntercepters=<span class="keyword">new</span> LinkedList&lt;&gt;();</div><div class="line"><span class="keyword">private</span> Request mRequest;</div><div class="line"><span class="keyword">private</span> <span class="keyword">int</span> mIndex;</div><div class="line"><span class="keyword">private</span> Callback mCallback;</div><div class="line"><span class="keyword">private</span> Chain mChain=<span class="keyword">new</span> Chain();</div><div class="line"><span class="keyword">private</span> Intercepter mNetIntercepter =<span class="keyword">new</span> Intercepter() &#123;</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Response <span class="title">chain</span> <span class="params">(Chain chain)</span> </span>&#123;</div><div class="line">    <span class="comment">//这里是真实的发送网络请求</span></div><div class="line">    <span class="keyword">return</span> 网络请示的响应;</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* 添加拦截器,后加的放最前面</div><div class="line">* <span class="doctag">@param</span> intercper 拦截器</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addIntercepter</span><span class="params">(Intercepter intercper)</span></span>&#123;</div><div class="line">    mIntercepters.add(<span class="number">0</span>, intercper);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* OkHttp请求的入口</div><div class="line">* <span class="doctag">@param</span> request 请示</div><div class="line">* <span class="doctag">@param</span> callback 回调</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Request request ,Callback callback)</span></span>&#123;</div><div class="line">    mCallback=callback;</div><div class="line">    mIndex=<span class="number">0</span>;</div><div class="line">    mRequest=request;</div><div class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span> <span class="params">()</span> </span>&#123;</div><div class="line">            Response response=mChain.process(mRequest);</div><div class="line">            mCallback.onResponse(response);</div><div class="line">        &#125;</div><div class="line">    &#125;).start();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* 定义的一个类用与递归的方式完成责任链发送请求获取响应</div><div class="line">*/</div><div class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Chain</span> </span>&#123;</div><div class="line"><span class="function"><span class="keyword">public</span> Request <span class="title">getRequest</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">return</span> mRequest;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* 顺序获取拦截器,传递chain对象给拦截器,获取响应</div><div class="line">* <span class="doctag">@return</span> 请求的响应</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">private</span> Response <span class="title">getResponse</span> <span class="params">()</span> </span>&#123;</div><div class="line">    Intercepter intercepter = mIntercepters.get(mIndex);</div><div class="line">    mIndex++;</div><div class="line">    <span class="keyword">return</span> intercepter.chain(<span class="keyword">this</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* 如果责任链没走完,则顺序从责任链中获取拦截器,处理请求</div><div class="line">* 否则由真正的负责网络请求的拦截器处理请求</div><div class="line">* <span class="doctag">@param</span> request 请求</div><div class="line">* <span class="doctag">@return</span> 响应</div><div class="line">*/</div><div class="line"><span class="function">Response <span class="title">process</span><span class="params">(Request request)</span></span>&#123;</div><div class="line">    mRequest=request;</div><div class="line">    <span class="keyword">if</span> (mIndex&gt;=mIntercepters.size())&#123;</div><div class="line">        <span class="keyword">return</span> Okhttp.<span class="keyword">this</span>.mNetIntercepter.chain(<span class="keyword">this</span>);</div><div class="line">        &#125;<span class="keyword">else</span>&#123;</div><div class="line">            <span class="keyword">return</span> getResponse();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>不得不说程序猿写文章真是容易骗字数.我已经极力在简化了.代码还是差不多上百行.</p>
+<p>应该写得够简单吧.重点也就几个</p>
+<ol>
+<li>内部有个处理真实网络请求的<code>Intercepter</code>,做为最后的接盘侠.</li>
+<li>返回响应的是<code>intercepter.chain(this)</code>,如果这个拦截器调用了<code>chain</code>的<code>process()</code>方法就形成递归,否则就是终断了请求的传递</li>
+<li>整个责任链的传递都是同步的.整体在子线程运行,最后通过回调返回响应.</li>
+</ol>
+<p>还有一个很经典的实现就是Android的事件分发机制.这里我就不贴代码骗字数了.网上随便一找一堆.</p>
+<h4 id="责任链模式的用途"><a href="#责任链模式的用途" class="headerlink" title="责任链模式的用途"></a>责任链模式的用途</h4><p>当业务逻辑需要形成一个事件处理流时,就可以考虑使用责任链模式.通过接口来规范中间环节的行为,专注与事件流的传递.可以随意扩展及调整中间环节.</p>
+<p>我在实际业务中的有一个场景中使用了责任链模式.(当时使用的时候其实并不清楚)</p>
+<ol>
+<li>在一个列表中可以弹出一个筛选菜单,菜单项是不定的.某些项选择后可以增加更多的选项条目</li>
+<li>选项条目类型不同.有单选,多选,输入等.</li>
+<li>点击完成时才把所有筛选条目形成对应的网络请求参数</li>
+</ol>
+<p>实际处理起来很简易.定义了两个类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ParamsSetAble</span></span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setParams</span><span class="params">(NetParams params)</span></span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NetParams</span></span>&#123;&#125;</div></pre></td></tr></table></figure></p>
+<p>每个条目实现<code>ParamsSetAble</code>接口用与设置参数.</p>
+<p><code>NetParams</code>类用与收集参数,最后转换成网络请求所用的格式</p>
+<p>当点击完成时,遍历所有的条目,传递<code>NetParams</code>对象.最后把这个对象传递给网络请求的类.</p>
+<p>在传递时进行可以进行参数检查,错误时可以中断传递,提示错误.我这里是通过手动抛异常来中断的.在外部统一<code>catch</code>处理.如果用<code>Rxjava</code>可以不用<code>catch</code>,在<code>onError</code>里统一管理.如<code>Observer.error(new 自定义异常(中断提示信息))</code></p>
+<p><a href="http://www.jianshu.com/p/8b9f45a79ee6" target="_blank" rel="external">原文链接</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/25/详解Lambda/" rel="next" title="详解Lambda">
+                <i class="fa fa-chevron-left"></i> 详解Lambda
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/25/ShadowSocks及kcptun加速/" rel="prev" title="ShadowSocks及kcptun加速">
+                ShadowSocks及kcptun加速 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="花京院典明" />
+          <p class="site-author-name" itemprop="name">花京院典明</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#责任链模式"><span class="nav-number">1.</span> <span class="nav-text">责任链模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OkHttp中的责任链模式"><span class="nav-number">2.</span> <span class="nav-text">OkHttp中的责任链模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#责任链模式的用途"><span class="nav-number">3.</span> <span class="nav-text">责任链模式的用途</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">花京院典明</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
